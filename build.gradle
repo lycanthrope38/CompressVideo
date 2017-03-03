@@ -5,7 +5,9 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.3.0'
+        classpath 'com.android.tools.build:gradle:2.2.3'
+        classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
+        classpath 'me.tatarka:gradle-retrolambda:3.2.4'
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
@@ -15,9 +17,64 @@ buildscript {
 allprojects {
     repositories {
         jcenter()
+        // required to find the project's artifacts
+        maven { url "https://www.jitpack.io" }
     }
 }
 
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
+
+ext {
+    versionCode = 1
+    versionName = '1.0'
+
+    minSdkVersion = 21
+    targetSdkVersion = 22
+    compileSdkVersion = 25
+    buildToolsVersion = '25.0.2'
+
+    playServices = '10.0.1'
+    supportLibs = '25.2.0'
+    guavaVersion = '18.0'
+    dagger = '2.5'
+    javaxInject = '1'
+    javaxAnnotationApi = '1.2'
+    rxJava = '1.1.3'
+    rxAndroid = '1.1.0'
+    okHttp = '3.2.0'
+    retrofit = '2.0.0'
+    jackson = '2.6.2'
+    autoValue = '1.1'
+    butterKnife = '7.0.1'
+    timber = '4.1.1'
+    espresso = '2.2.1'
+    stetho = '1.3.0'
+    leakCanary = '1.3.1'
+    paperwork = '1.2.4'
+    icepick = '3.1.0'
+    nimble = '0.5.1'
+    picasso = '2.5.2'
+    picassoOkHttpDownloader = '1.0.2'
+    videoPlayerManager = '0.2.0'
+    exoPlayer = 'r1.5.6'
+    dbFlow = '4.0.0-beta2'
+    photoView = '1.4.1'
+    braintree = '2.3.6'
+    glide = '3.7.0'
+    jsoup = '1.10.1'
+    ddp = 'v3.2.0'
+    gson = '2.8.0'
+    rxlifecycle = '1.0'
+    ffmpeg = '0.3.2'
+
+    junit = '4.12'
+    assertJ = '1.7.1'
+    equalsVerifier = '1.7.5'
+    mockito = '1.10.19'
+    supportTestRunner = '0.4.1'
+    robolectric = '3.0'
+}
+
+

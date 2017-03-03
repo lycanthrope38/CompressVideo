@@ -1,3 +1,19 @@
 <resources>
     <string name="app_name">CompressVideo</string>
+    <string name="no_video_tips">video file not found, please select video</string>
+    <string name="compress_load_library_succeed">Load library success</string>
+    <string name="compress_load_library_failed">Load library failed</string>
+    <string name="compress_succeed">compress success</string>
+    <string name="compress_failed">compress failed, reason: %1$s</string>
+    <string name="compress_progress">progress: %1$s</string>
+    <string name="compree_please_input_command">please input command</string>
+
+    <string name="run_compress_command">run compress command</string>
+    <string name="compress_result_input_output">input:%1$s,size:%2$s,output:%3$s,size:%4$s</string>
+    <string name="path">video path:%1$s,size:%2$s</string>
+    <string name="confirm">Confirm</string>
+    <string name="cancel">Cancel</string>
+    <string name="open_video">Open video</string>
+    <string name="dont_have_app_to_open_file">Cannot open file</string>
+
 </resources>
