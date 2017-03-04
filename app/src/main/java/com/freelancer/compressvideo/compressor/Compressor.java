@@ -1,4 +1,4 @@
-package com.freelancer.compressvideo;
+package com.freelancer.compressvideo.compressor;
 
 import android.app.Activity;
 

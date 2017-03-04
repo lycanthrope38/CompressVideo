@@ -1,4 +1,4 @@
-package com.freelancer.compressvideo;
+package com.freelancer.compressvideo.compressor;
 
 /**
  * Created by ThongLe on 3/3/2017.
