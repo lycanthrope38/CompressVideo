@@ -3,6 +3,8 @@ package com.freelancer.compressvideo;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.databinding.DataBindingUtil;
+import android.databinding.ObservableBoolean;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Handler;
@@ -21,39 +23,36 @@ import android.widget.Toast;
 import com.freelancer.compressvideo.compressor.CompressListener;
 import com.freelancer.compressvideo.compressor.CompressListenerCallback;
 import com.freelancer.compressvideo.compressor.Compressor;
+import com.freelancer.compressvideo.databinding.ActivityMainBinding;
 import com.freelancer.compressvideo.utils.FileUtils;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends AppCompatActivity {
 
     public static final int REQUEST_CODE_INPUT_VIDEO_PATH = 1;
 
-    private AppCompatButton mBtnCompressVideo;
-    private AppCompatTextView mTvLog;
-    private FloatingActionButton mFabPickFile;
-    private ScrollView mScrollView;
-    private EditText mEdSize;
-
     private Compressor mCompressor;
-    private static final Handler handler = new Handler();
+    private Handler handler = new Handler();
     private Context mContext;
 
     private String mInputVideoPath = "";
-    private String mOutputVideoPath = "/mnt/sdcard/out.mp4";
-    //    private String cmd = "-y -i " + mInputVideoPath + " -s 480x320 -r 20 -c:v libx264 -preset ultrafast -c:a copy -me_method zero -tune fastdecode -tune zerolatency -strict -2 -b:v 1000k -pix_fmt yuv420p " + mOutputVideoPath;
-    //    private String cmd = ffmpeg -i input_file.avi -codec:v libx264 -profile: high -preset slow -b:v 500k -maxrate 500k -bufsize 1000k -vf scale=-1:480 -threads 0 -codec:a libfdk_aac -b:a 128k output_file.mp4
-//    private String cmd[] = {"-y", "-i", mInputVideoPath, "-r", "20", "-c:v", "libx264", "-preset", "ultrafast", "-profile:v", "high", "-c:a", "copy", "-me_method", "zero", "-tune", "fastdecode", "-tune", "zerolatency", "-strict", "-2", "-b:v", "1000k", "-threads", "4", "-pix_fmt", "yuv420p", mOutputVideoPath};
-//    private String cmd[] = {"-i", mInputVideoPath, "-vcodec", "libx264", "-crf", "20", mOutputVideoPath};
-//    private String cmd[] = {"-i", mInputVideoPath, "-c:v", "libx264", "-crf", "24", "-c:a", "aac", mOutputVideoPath};
-//    private String cmd[] = {"-y", "-i", mInputVideoPath,"-s","640x480", "-r", "20", "-c:v", "libx264", "-preset", "ultrafast", "-profile:v", "high", "-c:a", "copy", "-me_method", "zero", "-tune", "fastdecode", "-tune", "zerolatency", "-strict", "-2", "-b:v", "1000k", "-threads", "4", "-pix_fmt", "yuv420p", mOutputVideoPath};
+    private String mOutputVideoPath = "";
+
+    private ActivityMainBinding mBinding;
+    public static ObservableBoolean isCompress = new ObservableBoolean();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        initViews();
+
+        mBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
+        mBinding.setMain(this);
+
+
         mCompressor = new Compressor(this);
         mContext = this;
         mCompressor.loadBinary(new CompressListener() {
@@ -69,21 +68,33 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         });
     }
 
-    private void initViews() {
-        mBtnCompressVideo = (AppCompatButton) findViewById(R.id.btn_compress_video);
-        mTvLog = (AppCompatTextView) findViewById(R.id.tv_log);
-        mFabPickFile = (FloatingActionButton) findViewById(R.id.fab_pick_file);
-        mScrollView = (ScrollView) findViewById(R.id.scrollView);
-        mEdSize = (EditText) findViewById(R.id.ed_size);
+    public void onCompressVideo() {
+        if (isCompress.get()) {
+            Toast.makeText(getApplicationContext(), R.string.compressing, Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (mBinding.getSize() == null) {
+            Toast.makeText(getApplicationContext(), R.string.compree_please_input_size, Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (TextUtils.isEmpty(mInputVideoPath)) {
+            Toast.makeText(getApplicationContext(), R.string.no_video_tips, Toast.LENGTH_SHORT).show();
+            return;
+        }
+        isCompress.set(true);
+        compressVideo();
+    }
 
-        mBtnCompressVideo.setOnClickListener(this);
-        mFabPickFile.setOnClickListener(this);
+    public void onPickFile() {
+        Intent mediaChooser = new Intent(Intent.ACTION_GET_CONTENT);
+        mediaChooser.setType("video/*");
+        startActivityForResult(mediaChooser, REQUEST_CODE_INPUT_VIDEO_PATH);
     }
 
     private void textAppend(String text) {
         if (!TextUtils.isEmpty(text)) {
-            mTvLog.append(text + "\n");
-            handler.post(() -> mScrollView.fullScroll(ScrollView.FOCUS_DOWN));
+            mBinding.tvLog.append(text + "\n");
+            handler.post(() -> mBinding.scrollView.fullScroll(ScrollView.FOCUS_DOWN));
         }
     }
 
@@ -95,6 +106,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case REQUEST_CODE_INPUT_VIDEO_PATH:
                 Uri selectedImage = data.getData();
                 mInputVideoPath = FileUtils.getPath(mContext, selectedImage);
+                mBinding.setInput(mInputVideoPath);
+                Pattern p = Pattern.compile(".*" + File.separator + "(.*)\\..*");
+                Matcher m = p.matcher(mInputVideoPath);
+                if (m.matches()) {
+                    mOutputVideoPath="";
+                    mOutputVideoPath = "/mnt/sdcard/" + m.group(1) + "_out.mp4";
+                    mBinding.setOutput(mOutputVideoPath);
+                }
                 break;
         }
     }
@@ -106,7 +125,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     public void compressVideo() {
         int duration = getDuration();
-        int bitrate = calBitrate(duration / 1000, Integer.parseInt(mEdSize.getText().toString().trim()));
+        int bitrate = calBitrate(duration / 1000, Integer.parseInt(mBinding.getSize().trim()));
 
         ArrayList<String> paras = new ArrayList<>();
 
@@ -150,19 +169,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         execCommand(paras.toArray(new String[paras.size()]));
     }
 
-    @Override
-    public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.btn_compress_video:
-                compressVideo();
-                break;
-            case R.id.fab_pick_file:
-                Intent mediaChooser = new Intent(Intent.ACTION_GET_CONTENT);
-                mediaChooser.setType("video/*");
-                startActivityForResult(mediaChooser, REQUEST_CODE_INPUT_VIDEO_PATH);
-                break;
-        }
-    }
 
     private int calBitrate(int duration, int targetSize) {
         targetSize = targetSize * 1024 * 1024;
@@ -183,7 +189,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 String result = getString(R.string.compress_result_input_output, mInputVideoPath
                         , FileUtils.getFileSize(mInputVideoPath), mOutputVideoPath, FileUtils.getFileSize(mOutputVideoPath));
                 textAppend(result);
-
+                isCompress.set(false);
                 new AlertDialog.Builder(mContext)
                         .setTitle(getString(R.string.compress_succeed))
                         .setMessage(result)

@@ -1,62 +1,153 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@drawable/backgroundcolor">
+        xmlns:card_view="http://schemas.android.com/tools">
 
-    <RelativeLayout
+    <data>
+
+        <variable
+                name="main"
+                type="com.freelancer.compressvideo.MainActivity"/>
+
+        <variable
+                name="size"
+                type="String"/>
+
+        <variable
+                name="input"
+                type="String"/>
+
+        <variable
+                name="output"
+                type="String"/>
+    </data>
+
+    <android.support.design.widget.CoordinatorLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            >
+            android:background="@drawable/backgroundcolor">
 
-        <android.support.v7.widget.AppCompatButton
-                android:id="@+id/btn_compress_video"
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:background="@drawable/turn_button"
-                android:layout_marginTop="18dp"
-                android:layout_alignParentTop="true"
-                android:layout_centerHorizontal="true"/>
-
-        <android.support.v7.widget.AppCompatEditText
-                android:id="@+id/ed_size"
-                android:layout_below="@+id/btn_compress_video"
+        <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textColorHint="#FFFFFF"
-                android:hint="Size(MB)"/>
+                android:layout_height="match_parent">
 
-        <ScrollView
-                android:id="@+id/scrollView"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_below="@+id/ed_size"
-                android:padding="10dp">
-
-            <android.support.v7.widget.AppCompatTextView
-                    android:id="@+id/tv_log"
+            <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:textColor="#FFFFFF"
-                    />
-        </ScrollView>
+                    android:orientation="vertical">
 
-        <android.support.design.widget.FloatingActionButton
-                android:id="@+id/fab_pick_file"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:srcCompat="@drawable/ic_add_white_24dp"
-                app:fabSize="normal"
-                app:layout_anchorGravity="bottom|right|end"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
-                android:layout_marginBottom="23dp"
-                android:layout_alignParentBottom="true"
-                android:layout_alignParentEnd="true"
-                android:layout_marginEnd="17dp"/>
+                <android.support.v7.widget.CardView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        card_view:cardCornerRadius="2dp"
+                        android:layout_margin="10dp"
+                        card_view:theme="@android:style/Animation">
 
-    </RelativeLayout>
+                    <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="220dp"
+                            android:layout_margin="10dp"
+                            android:orientation="vertical">
 
-</android.support.design.widget.CoordinatorLayout>
+                        <android.support.v7.widget.AppCompatButton
+                                android:id="@+id/btn_compress_video"
+                                android:layout_width="80dp"
+                                android:layout_height="80dp"
+                                android:background="@{main.isCompress?@drawable/shape_circle_state_on:@drawable/shape_circle_state_off}"
+                                android:layout_gravity="center"
+                                android:onClick="@{()->main.onCompressVideo()}"
+                                />
+
+                        <LinearLayout
+                                android:layout_marginTop="15dp"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal">
+
+                            <android.support.v7.widget.AppCompatTextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Input path: "
+                                    android:textStyle="bold"
+                                    android:textAppearance="?android:attr/textAppearanceMedium"/>
+
+                            <android.support.v7.widget.AppCompatTextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="@={input}"
+                                    android:maxLines="1"
+                                    android:textAppearance="?android:attr/textAppearanceMedium"
+                                    android:layout_marginLeft="10dp"/>
+                        </LinearLayout>
+
+                        <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal">
+
+                            <android.support.v7.widget.AppCompatTextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Output path: "
+                                    android:textAppearance="?android:attr/textAppearanceMedium"
+                                    android:textStyle="bold"
+                                    />
+
+                            <android.support.v7.widget.AppCompatTextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="@={output}"
+                                    android:maxLines="1"
+                                    android:textAppearance="?android:attr/textAppearanceMedium"
+                                    android:layout_marginLeft="10dp"/>
+                        </LinearLayout>
+
+                        <android.support.v7.widget.AppCompatEditText
+                                android:id="@+id/ed_size"
+                                android:layout_below="@+id/btn_compress_video"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:hint="Size(MB)"
+                                android:textStyle="bold"
+                                android:inputType="number"
+                                android:textAppearance="?android:attr/textAppearanceMedium"
+                                android:text="@={size}"/>
+                    </LinearLayout>
+                </android.support.v7.widget.CardView>
+
+
+                <ScrollView
+                        android:id="@+id/scrollView"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_below="@+id/ed_size"
+                        android:padding="10dp">
+
+                    <android.support.v7.widget.AppCompatTextView
+                            android:id="@+id/tv_log"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:textColor="#FFFFFF"
+                            />
+                </ScrollView>
+            </LinearLayout>
+
+            <android.support.design.widget.FloatingActionButton
+                    android:id="@+id/fab_pick_file"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:srcCompat="@drawable/ic_add_white_24dp"
+                    app:fabSize="normal"
+                    app:layout_anchorGravity="bottom|right|end"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_marginBottom="23dp"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginEnd="17dp"
+                    android:onClick="@{()->main.onPickFile()}"/>
+
+
+        </RelativeLayout>
+    </android.support.design.widget.CoordinatorLayout>
+</layout>

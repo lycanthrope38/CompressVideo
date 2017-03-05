@@ -72,7 +72,7 @@ public final class FileUtils {
         }
     }
 
-    private String getFileSize(String path) {
+    public static String getFileSize(String path) {
         File f = new File(path);
         if (!f.exists()) {
             return "0 MB";

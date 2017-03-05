@@ -7,6 +7,8 @@
     <string name="compress_failed">compress failed, reason: %1$s</string>
     <string name="compress_progress">progress: %1$s</string>
     <string name="compree_please_input_command">please input command</string>
+    <string name="compree_please_input_size">please input file size</string>
+    <string name="compressing">Compressing.Please waiting…</string>
 
     <string name="run_compress_command">run compress command</string>
     <string name="compress_result_input_output">input:%1$s,size:%2$s,output:%3$s,size:%4$s</string>
